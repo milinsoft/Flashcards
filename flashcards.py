@@ -1,18 +1,18 @@
 class Flashcards:
     flashcards = dict()
 
-    def __init__(self, number_of_cards):
+    def __init__(self, number_of_cards: int):
         self.number_of_cards = number_of_cards
 
     def create_flashcards(self):
-        def get_term():
+        def get_term() -> str:
             _term = input(f"The term for card #{n}:\n")
             while _term in self.flashcards:
                 print(f'The term "{_term}" already exists. Try again:')
                 _term = input()
             return _term
 
-        def get_definition():
+        def get_definition() -> str:
             _definition = input(f"The definition for card #{n}:\n")
             while _definition in self.flashcards.values():
                 print(f"The definition \"{_definition}\" already exists. Try again:")
@@ -24,7 +24,7 @@ class Flashcards:
             definition = get_definition()
             self.flashcards[term] = definition
 
-    def get_key_by_value(self, _value):
+    def get_key_by_value(self, _value: str) -> str:
         _items_list = list(self.flashcards.items())
         for _item in _items_list:
             if _value in _item:
@@ -45,7 +45,11 @@ class Flashcards:
 
 
 def main():
-    number_of_cards = int(input("Input the number of cards:\n"))
+    try:
+        number_of_cards = int(input("Input the number of cards:\n"))
+    except ValueError:
+        print("ONLY integers allowed. try again:\n")
+        return main()
     flashcards = Flashcards(number_of_cards)
     flashcards.create_flashcards()
     flashcards.test_user_knowledge()
