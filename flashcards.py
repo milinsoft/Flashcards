@@ -94,9 +94,12 @@ class Flashcards:
             elif action == "export":
                 self.store_flashcards()
             elif action == "ask":
-                repeat = int(input("How many times to ask?\n"))
-                for _ in range(repeat):
-                    self.test_user_knowledge()
+                try:
+                    repeat = int(input("How many times to ask?\n"))
+                    for _ in range(repeat):
+                        self.test_user_knowledge()
+                except ValueError:
+                    print("Print natural number (integer)")
             else:
                 print("Incorrect option. Try again:")
                 return self.menu()
