@@ -82,27 +82,28 @@ class Flashcards:
     def menu(self):
         while True:
             action = input("Input the action (add, remove, import, export, ask, exit):\n")
-            if action == 'exit':
-                print("bye bye")
-                exit()
-            elif action == "add":
-                self.create_flashcards()
-            elif action == "remove":
-                self.remove_card()
-            elif action == "import":
-                self.cards_from_file()
-            elif action == "export":
-                self.store_flashcards()
-            elif action == "ask":
-                try:
-                    repeat = int(input("How many times to ask?\n"))
-                    for _ in range(repeat):
-                        self.test_user_knowledge()
-                except ValueError:
-                    print("Print natural number (integer)")
-            else:
-                print("Incorrect option. Try again:")
-                return self.menu()
+            match action:
+                case 'exit':
+                    print("bye bye")
+                    exit()
+                case "add":
+                    self.create_flashcards()
+                case "remove":
+                    self.remove_card()
+                case "import":
+                    self.cards_from_file()
+                case "export":
+                    self.store_flashcards()
+                case "ask":
+                    try:
+                        repeat = int(input("How many times to ask?\n"))
+                        for _ in range(repeat):
+                            self.test_user_knowledge()
+                    except ValueError:
+                        print("Print natural number (integer)")
+                case _:
+                    print("Incorrect option. Try again:")
+                    return self.menu()
 
 
 if __name__ == '__main__':
