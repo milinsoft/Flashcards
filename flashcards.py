@@ -5,16 +5,43 @@ class Flashcards:
         self.number_of_cards = number_of_cards
 
     def create_flashcards(self):
+        def get_term():
+            _term = input(f"The term for card #{n}:\n")
+            while _term in self.flashcards:
+                print(f'The term "{_term}" already exists. Try again:')
+                _term = input()
+            return _term
+
+        def get_definition():
+            _definition = input(f"The definition for card #{n}:\n")
+            while _definition in self.flashcards.values():
+                print(f"The definition \"{_definition}\" already exists. Try again:")
+                _definition = input()
+            return _definition
+
         for n in range(1, self.number_of_cards + 1):
-            term = input(f"The term for card #{n}:\n")
-            definition = input(f"The definition for card #{n}:\n")
+            term = get_term()
+            definition = get_definition()
             self.flashcards[term] = definition
+
+    def get_key_by_value(self, _value):
+        _items_list = list(self.flashcards.items())
+        for _item in _items_list:
+            if _value in _item:
+                return _item[0]
 
     def test_user_knowledge(self):
         for card in self.flashcards.keys():
             print(f"Print the definition of \"{card}\":")
             response = input()
-            print("Correct!" if response == self.flashcards[card] else f"Wrong. The right answer is \"{self.flashcards[card]}\"")
+            if response == self.flashcards[card]:
+                print("Correct!")
+            else:
+                if response not in self.flashcards.values():
+                    print(f"Wrong. The right answer is \"{self.flashcards[card]}\"")
+                else:
+                    matching_key = self.get_key_by_value(response)
+                    print(f"Wrong. The right answer is \"{self.flashcards[card]}\", but your definition is correct for \"{matching_key}\".")
 
 
 def main():
