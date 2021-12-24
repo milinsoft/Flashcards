@@ -10,28 +10,30 @@ class Logger:
 
     # working function
     def logged_input(self, input_message=""):
+        _in = "\u21A9"  # char for ↩
+        _out = "\u21AA"  # chars for ↪
         _input = input(f"{input_message}")
-        if input_message:
-            self.logger.write(input_message)
-        self.logger.write(_input + "\n")
+        self.logger.write(f"{_out} {''.join(input_message)}\n")
+        self.logger.write(f"{_in} {str(_input)}\n")
         return _input
 
     # think about utilizing that as method without printing itself
-    def logged_print(self, _text, show=True):
-        self.logger.write(_text + "\n")
-        if show:
-            print(_text)
+    def logged_print(self, _text=""):
+        _out = "\u21AA"  # chars for ↪
+        self.logger.write(f"{_out} {_text}\n")
+        return print(_text)
+
 
     def save_logs(self):
         logger_file = logger.logged_input("File name:\n")
-        #with open("/Users/aleksander/Desktop/test.txt", "w") as log_file:
-        with open(logger_file, "w") as log_file:
+        with open("/Users/aleksander/Desktop/test.txt", "w") as log_file:
+        #with open(logger_file, "w") as log_file:
             for line in self.logger.getvalue():
                 log_file.write(line)
         print("The log has been saved.")
 
 
-class Flashcards():
+class Flashcards:
     flashcards = dict()
 
     def __init__(self):
