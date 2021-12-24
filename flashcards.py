@@ -23,7 +23,9 @@ class Logger:
             print(_text)
 
     def save_logs(self):
-        with open("/Users/aleksander/Desktop/test.txt", "w") as log_file:
+        logger_file = logger.logged_input("File name:\n")
+        #with open("/Users/aleksander/Desktop/test.txt", "w") as log_file:
+        with open(logger_file, "w") as log_file:
             for line in self.logger.getvalue():
                 log_file.write(line)
         print("The log has been saved.")
