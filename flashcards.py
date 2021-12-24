@@ -1,33 +1,61 @@
 import pickle
 import random
+from io import StringIO
 
 
-class Flashcards:
+
+class Logger:
+    def __init__(self):
+        self.logger = StringIO()
+
+    # working function
+    def logged_input(self, input_message=""):
+        _input = input(f"{input_message}")
+        if input_message:
+            self.logger.write(input_message)
+        self.logger.write(_input + "\n")
+        return _input
+
+    # think about utilizing that as method without printing itself
+    def logged_print(self, _text, show=True):
+        self.logger.write(_text + "\n")
+        if show:
+            print(_text)
+
+    def save_logs(self):
+        with open("/Users/aleksander/Desktop/test.txt", "w") as log_file:
+            for line in self.logger.getvalue():
+                log_file.write(line)
+        print("The log has been saved.")
+
+
+class Flashcards():
     flashcards = dict()
 
     def __init__(self):
         self.number_of_cards = 0
+ 
 
     def create_flashcards(self):
 
         def get_term() -> str:
-            _term = input(f"The term for card #{self.number_of_cards + 1}:\n")
+            _term = logger.logged_input(f"The term for card #{self.number_of_cards + 1}:\n")
             while _term in self.flashcards:
-                print(f'The term "{_term}" already exists. Try again:')
-                _term = input()
+                logger.logged_print(f'The term "{_term}" already exists. Try again:')
+                _term = logger.logged_input()
             return _term
 
         def get_definition() -> str:
-            _definition = input(f"The definition for card #{self.number_of_cards + 1}:\n")
+            _definition = logger.logged_input(f"The definition for card #{self.number_of_cards + 1}:\n")
             while _definition in self.flashcards.values():
-                print(f"The definition \"{_definition}\" already exists. Try again:")
-                _definition = input()
+                logger.logged_print(f"The definition \"{_definition}\" already exists. Try again:")
+                _definition = logger.logged_input()
             return _definition
 
         term = get_term()
         definition = get_definition()
         self.flashcards[term] = definition
-        print(f"The pair (\"{term}\":\"{definition}\") has been added.")
+        logger.logged_print(f"The pair (\"{term}\":\"{definition}\") has been added.")
         self.number_of_cards += 1
 
     def get_key_by_value(self, _value: str) -> str:
@@ -38,53 +66,62 @@ class Flashcards:
 
     def test_user_knowledge(self):
         card = random.choice([x for x in self.flashcards.keys()])
-        print(f"Print the definition of \"{card}\":")
-        response = input()
+        logger.logged_print(f"Print the definition of \"{card}\":")
+        response = logger.logged_input()
         if response == self.flashcards[card]:
-            print("Correct!")
+            logger.logged_print("Correct!")
         else:
             if response not in self.flashcards.values():
-                print(f"Wrong. The right answer is \"{self.flashcards[card]}\"")
+                logger.logged_print(f"Wrong. The right answer is \"{self.flashcards[card]}\"")
             else:
                 matching_key = self.get_key_by_value(response)
-                print(
+                logger.logged_print(
                     f"Wrong. The right answer is \"{self.flashcards[card]}\", but your definition is correct for \"{matching_key}\".")
 
     def remove_card(self):
-        card_to_remove = input("Which card?\n")
+        card_to_remove = logger.logged_input("Which card?\n")
         try:
             del self.flashcards[card_to_remove]
-            print("The card has been removed.")
+            logger.logged_print("The card has been removed.")
         except KeyError:
-            print(f"Can't remove \"{card_to_remove}\": there is no such card.")
+            logger.logged_print(f"Can't remove \"{card_to_remove}\": there is no such card.")
 
     def cards_from_file(self):
-        file_name = input("File name:\n")
+        file_name = logger.logged_input("File name:\n")
         try:
             with open(file_name, "rb") as file:
                 self.flashcards = pickle.load(file)
-                print(f"{len(self.flashcards)} cards have been loaded." if len(
+                logger.logged_print(f"{len(self.flashcards)} cards have been loaded." if len(
                     self.flashcards) != 1 else "1 Card has been loaded.")
         except FileNotFoundError:
-            print("File not found.")
+            logger.logged_print("File not found.")
 
     def store_flashcards(self):
-        file_name = input("File name:\n")
+        file_name = logger.logged_input("File name:\n")
         if not file_name.endswith(".txt"):
-            print("Incorrect file_name, please enter something like cards.txt ")
+            logger.logged_print("Incorrect file_name, please enter something like cards.txt ")
             return self.store_flashcards()
         else:
             with open(file_name, "wb") as file:
                 pickle.dump(self.flashcards, file, pickle.HIGHEST_PROTOCOL)
-                print(f"{len(self.flashcards)} cards have been saved." if len(
+                logger.logged_print(f"{len(self.flashcards)} cards have been saved." if len(
                     self.flashcards) != 1 else "1 Card has been saved.")
+
+    def reset_stats(self):
+        ...
+
+
+    def get_hardest_card(self):
+        pass
 
     def menu(self):
         while True:
-            action = input("Input the action (add, remove, import, export, ask, exit):\n")
+            # action = logger.logged_input("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):\n")
+            action = logger.logged_input("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):\n")
+            # match - case works only starting from Python 3.10 and newer
             match action:
                 case 'exit':
-                    print("bye bye")
+                    logger.logged_print("bye bye")
                     exit()
                 case "add":
                     self.create_flashcards()
@@ -96,16 +133,59 @@ class Flashcards:
                     self.store_flashcards()
                 case "ask":
                     try:
-                        repeat = int(input("How many times to ask?\n"))
+                        repeat = int(logger.logged_input("How many times to ask?\n"))
                         for _ in range(repeat):
                             self.test_user_knowledge()
                     except ValueError:
-                        print("Print natural number (integer)")
+                        logger.logged_print("Print natural number (integer)")
+
+                case "log":
+                    logger.save_logs()
+
+                case "hardest card":
+                    self.get_hardest_card()
+
+                case "reset stats":
+                    self.reset_stats()
+
+
                 case _:
-                    print("Incorrect option. Try again:")
+                    logger.logged_print("Incorrect option. Try again:")
                     return self.menu()
 
 
 if __name__ == '__main__':
+    logger = Logger()
     flashcards = Flashcards()
     flashcards.menu()
+
+
+# HINT
+""" 
+The hardest part it's probably the logger. I used the hints, it wasn't easy but in the end i figured out. What i was missing is the correct usage of StringIO object.
+
+you can create the StringIO object, after importing from io module, with:
+mem_buffer = StringIO()
+
+after that every time you want to write something in memory, you can do:
+mem_buffer.write('some_string\n')
+for me, i had to add the '\n' at the end every time, tried some argument like "newline='\n'" when i declared the constructor, but it didn't work. 
+
+Anyway, the part that is missing from the previous hint and that caused me some trouble is the reading part. When you have to read the content previously written there are 2 ways:
+
+- using mem_buffer.getvalue() that return all the content of the buffer
+
+- use mem_buffer.seek(0) to set the pointer at the beginning and mem_obj.read() to read the contents.
+
+After reading all the contents you can use the context manager or the function open to write on file what you have read. (don't forget to close the buffer in the end)
+
+To avoid to print on console and write in the buffer i used a function:
+
+def print_and_log(string):
+    if string is not None:
+        memory_file.write(string+'\n')
+        print(string)
+
+The "None" condition could not be necessary for you.
+
+Hope it will help"""
