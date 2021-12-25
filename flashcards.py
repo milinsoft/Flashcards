@@ -26,11 +26,12 @@ class Logger:
 
     def save_logs(self):
         logger_file = logger.logged_input("File name:\n")
-        with open("/Users/aleksander/Desktop/test.txt", "w") as log_file:
-        #with open(logger_file, "w") as log_file:
+        #with open("/Users/aleksander/Desktop/test.txt", "w") as log_file:
+        with open(logger_file, "w") as log_file:
             for line in self.logger.getvalue():
                 log_file.write(line)
         print("The log has been saved.")
+
 
 
 class Flashcards:
@@ -126,6 +127,7 @@ class Flashcards:
             match action:
                 case 'exit':
                     logger.logged_print("bye bye")
+                    logger.logger.close()  # closing loger / output object.
                     exit()
                 case "add":
                     self.create_flashcards()
